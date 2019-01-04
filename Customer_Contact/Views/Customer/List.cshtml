@@ -1,0 +1,130 @@
+﻿@using Customer_Contact.Models;
+@model Customer_Contact.Models.CustomerSearchModel
+
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], "Customer", FormMethod.Post))
+{
+    <section id="searchForm">
+        <div class="row form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            </div>
+
+            @Html.LabelFor(m => m.GenderId, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.GenderId, (IEnumerable<SelectListItem>)ViewBag.Genders, "", new { @class = "form-control" })
+            </div>
+
+            <div class="col-md-offset-2 col-md-2">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            @Html.LabelFor(m => m.CityId, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.CityId, (IEnumerable<SelectListItem>)ViewBag.Cities, "", new { @class = "form-control" })
+            </div>
+
+            @Html.LabelFor(m => m.RegionId, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.RegionId, (IEnumerable<SelectListItem>)ViewBag.Regions, "", new { @class = "form-control" })
+            </div>
+
+            <div class="col-md-offset-2 col-md-2">
+                <button class="btn btn-default" type="reset">Clear Fields</button>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            @Html.LabelFor(m => m.LastPurchaseStart, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.LastPurchaseStart, new { @type = "date", @class = "form-control" })
+            </div>
+
+            @Html.Label("until", new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.LastPuchaseEnd, new { @type = "date", @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="row form-group">
+            @Html.LabelFor(m => m.ClassificationId, new { @class = "col-md-1 control-label" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.ClassificationId, (IEnumerable<SelectListItem>)ViewBag.Classifications, "", new { @class = "form-control" })
+            </div>
+
+            @if (HttpContext.Current.User.IsInRole("Administrator"))
+            {
+                @Html.LabelFor(m => m.SellerId, new { @class = "col-md-1 control-label" })
+                <div class="col-md-3">
+                    @Html.DropDownListFor(m => m.SellerId, (IEnumerable<SelectListItem>)ViewBag.Sellers, "", new { @class = "form-control" })
+                </div>
+            }
+
+        </div>
+
+        @if (ViewBag.Customers != null)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Classification</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>City</th>
+                        <th>Region</th>
+                        <th>Last Purchase</th>
+                        @if (HttpContext.Current.User.IsInRole("Administrator"))
+                        {
+                            <th>Seller</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customerModel in (IEnumerable<CustomerListModel>)ViewBag.Customers)
+                    {
+                    <tr>
+                        <td>
+                            @customerModel.Classification
+                        </td>
+                        <td>
+                            @customerModel.Name
+                        </td>
+                        <td>
+                            @customerModel.Phone
+                        </td>
+                        <td>
+                            @customerModel.Gender
+                        </td>
+                        <td>
+                            @customerModel.City
+                        </td>
+                        <td>
+                            @customerModel.Region
+                        </td>
+                        <td>
+                            @Html.DisplayFor(x => customerModel.LastPurchase)
+                        </td>
+                        @if (HttpContext.Current.User.IsInRole("Administrator"))
+                        {
+                            <td>
+                                @customerModel.Seller
+                            </td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+}
+
